@@ -1,6 +1,7 @@
 import express from 'express';
 import { authenticateJwt, SECRET } from "../middleware/index";
-import { Todo } from "../db";
+// import { Todo } from "../db";
+import { getTodos, createToDo, updateTodo } from '../db/ToDo';
 const router = express.Router();
 
 interface CreateTodoInput {
@@ -8,14 +9,13 @@ interface CreateTodoInput {
   description: string;
 }
 
-router.post('/todos', authenticateJwt, (req, res) => {
+router.post('/todos', authenticateJwt, async (req, res) => {
   const { title, description } = req.body;
   const done = false;
   const userId = req.headers["userId"];
 
-  const newTodo = new Todo({ title, description, done, userId });
-
-  newTodo.save()
+  const newTodo = createToDo(title, description, done, parseInt(userId as string));
+  newTodo
     .then((savedTodo) => {
       res.status(201).json(savedTodo);
     })
@@ -28,7 +28,7 @@ router.post('/todos', authenticateJwt, (req, res) => {
 router.get('/todos', authenticateJwt, (req, res) => {
   const userId = req.headers["userId"];
 
-  Todo.find({ userId })
+  getTodos(parseInt(userId as string))
     .then((todos) => {
       res.json(todos);
     })
@@ -41,7 +41,7 @@ router.patch('/todos/:todoId/done', authenticateJwt, (req, res) => {
   const { todoId } = req.params;
   const userId = req.headers["userId"];
 
-  Todo.findOneAndUpdate({ _id: todoId, userId }, { done: true }, { new: true })
+  updateTodo(parseInt(todoId))
     .then((updatedTodo) => {
       if (!updatedTodo) {
         return res.status(404).json({ error: 'Todo not found' });
