@@ -1,8 +1,8 @@
-import { z } from "zod";
-export const signupInput = z.object({
-    username: z.string(),
-    password: z.string()
-})
-console.log("hi there");
+import { z } from 'zod'
 
-export type SignupParams = z.infer<typeof signupInput>;
+export const signupInput = z.object({
+    username: z.string().min(5).max(30).email(),
+    password: z.string().min(6).max(12)
+})
+
+export type signupParams = z.infer<typeof signupInput>

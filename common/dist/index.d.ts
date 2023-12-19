@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 export declare const signupInput: z.ZodObject<{
     username: z.ZodString;
     password: z.ZodString;
@@ -9,4 +9,4 @@ export declare const signupInput: z.ZodObject<{
     username: string;
     password: string;
 }>;
-export type SignupParams = z.infer<typeof signupInput>;
+export type signupParams = z.infer<typeof signupInput>;
